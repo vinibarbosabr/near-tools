@@ -1,4 +1,4 @@
-# vinib tools
+# NEAR tools
 
 Collection of public tools used for blockchain research, web3 security, and more.
 
