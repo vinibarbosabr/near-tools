@@ -4,6 +4,8 @@ NEAR Shard Monitor
 Check the current number of active shards on NEAR Testnet or Mainnet.
 """
 
+__version__ = "0.1.0"
+
 import argparse
 import json
 import urllib.request
@@ -12,7 +14,7 @@ import sys
 import time
 
 
-def get_shard_info(network: str = "testnet"):
+def get_shard_info(network: str = "mainnet"):
     rpc_url = f"https://rpc.{network}.near.org"
     
     payload = {
@@ -49,12 +51,26 @@ def get_shard_info(network: str = "testnet"):
         "rpc_url": rpc_url
     }
 
+def print_header(network: str):
+    print("\n" + "=" * 48)
+    print("           NEAR SHARD MONITOR")
+    print("=" * 48)
+    print(f"Network: {network.upper()}\n")
+
+
+def print_footer():
+    print("-" * 48)
+    print("By: Vini Barbosa (github.com/vinibarbosabr)")
+    print("=" * 48 + "\n")
+
 
 def format_output(info: dict, json_output: bool = False):
     if json_output:
         print(json.dumps(info, indent=2))
         return
     
+    print_header(info["network"])
+
     ts = datetime.datetime.fromtimestamp(
         info["timestamp"] / 1e9, tz=datetime.timezone.utc
     ).strftime("%Y-%m-%d %H:%M:%S UTC")
@@ -67,6 +83,8 @@ def format_output(info: dict, json_output: bool = False):
     print(f"🕒 Timestamp:   {ts}")
     print(f"🔗 Explorer:    {explorer_url}")
 
+    print_footer()
+
 
 def main():
     parser = argparse.ArgumentParser(
@@ -76,7 +94,7 @@ def main():
     parser.add_argument(
         "--network", 
         choices=["testnet", "mainnet"], 
-        default="testnet",
+        default="mainnet",
         help="NEAR network to query"
     )
     parser.add_argument(
@@ -90,6 +108,12 @@ def main():
         metavar="SECONDS",
         help="Continuously monitor every N seconds"
     )
+    parser.add_argument(
+        "--version",
+        action="version",
+        version=f"%(prog)s {__version__}"
+    )
+
     
     args = parser.parse_args()
     
